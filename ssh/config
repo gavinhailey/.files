@@ -1,0 +1,22 @@
+Include /Users/gavin.hailey/.colima/ssh_config
+
+Host sftp*.ibotta.com sftp.ibotta.com
+  User root_user
+  IdentityFile ~/.ssh/sftp_rsa
+
+Host sftp.dev.ibotta.com
+  User root_user
+  IdentityFile ~/.ssh/staging_sftp_rsa
+
+Host *.ibotta.com *.compute-1.amazonaws.com *.ec2.internal
+  User gavin.hailey
+  AddKeysToAgent yes
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  IdentityFile ~/.ssh/id_ed25519
+
+Host github.com
+  User git
+  AddKeysToAgent yes
+  HostName github.com
+  IdentityFile ~/.ssh/id_ed25519
