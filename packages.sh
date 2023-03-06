@@ -17,7 +17,7 @@ function install_all_packages {
 
   source ~/.zshrc || true
 
-  # install_python_poetry
+  install_python_poetry
   install_neovim
 
   brew install bat awscli saml2aws gh fzf ripgrep tldr htop tree jq tmux openssh gnu-getopt gnupg
