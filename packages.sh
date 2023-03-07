@@ -8,8 +8,9 @@ function install_all_packages {
   install_rbenv
   install_nvm
   install_jenv
-  brew install go
+  install_go
   install_rust
+  install_docker_colima
 
   install_my_zshrc
   install_gitconfig
@@ -44,6 +45,11 @@ function install_rbenv {
   brew install rbenv ruby-build
 }
 
+function install_go {
+  echo "Installing go"
+  brew install go
+}
+
 function install_nvm {
   echo "Installing nvm"
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
@@ -66,7 +72,9 @@ function install_rust {
 
 function install_docker_colima {
   echo "Installing docker + colima"
-  brew install colima docker
+  brew install colima docker docker-compose docker-credential-helper
+  mkdir -p "${HOME}/.docker/cli-plugins"
+  ln -sfn "$(brew --prefix docker-compose)/bin/docker-compose" "${HOME}/.docker/cli-plugins/docker-compose"
 }
 
 function install_neovim {
@@ -89,7 +97,7 @@ function install_oh_my_zsh {
 
   # restart shell
   echo "Configure p10k..."
-  source ~/.zshrc
+  source ~/.zshrc || true
   p10k configure
 }
 
@@ -111,3 +119,4 @@ function install_gitconfig {
   rm -f ~/.gitconfig
   ln -s $DOTFILES_PATH/gitconfig ~/.gitconfig
 }
+

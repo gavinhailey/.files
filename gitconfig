@@ -1,7 +1,7 @@
 [user]
-	name = Gavin Hailey
-	email = gavin.hailey@ibotta.com
+  name = Gavin Hailey
+  email = gavin.hailey@ibotta.com
 [fetch]
-	prune = true
+  prune = true
 [push]
-	autoSetupRemote = true
+  autoSetupRemote = true

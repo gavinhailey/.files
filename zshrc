@@ -83,6 +83,10 @@ alias tsa-staging="saml2aws exec --exec-profile tlog-staging-admin --"
 alias tsa-k8s="saml2aws exec --exec-profile tlog-prod-admin --"
 
 ## environment variables
+
+export EDITOR='nvim'
+export VISUAL='nvim'
+
 ### credentials
 export NPM_BASE=$(keychain-environment-variable NPM_BASE)
 export NPM_REPO_LOGIN=$(keychain-environment-variable NPM_REPO_LOGIN)
@@ -104,13 +108,13 @@ export PATH="/Users/gavin.hailey/.local/bin:$PATH"
 export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
 
 ## functions
-function merge-this-branch() {
+function merge-this-branch {
     BRANCH=$(git rev-parse --abbrev-ref HEAD)
     gh pr merge $BRANCH -s -d --auto -b ''
 }
 
-function diff-to-html() {
-    vimdiff $1 $2 -c TOhtml -c "w $3" -c 'qa!'
+function diff-to-html {
+    nvim -d $1 $2 -c TOhtml -c "w $3" -c 'qa!'
 }
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
