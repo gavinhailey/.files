@@ -53,7 +53,7 @@ export PATH=$PATH:/Users/$USER/.cargo/bin
 
 ### go
 export GOROOT="/opt/homebrew/opt/go"
-export GOPATH="$HOME/.go"
+export GOPATH="$HOME/.local/go"
 export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 
 ## completions 
