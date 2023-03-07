@@ -67,9 +67,6 @@ alias cat="bat"
 alias vim="nvim"
 alias vi="nvim"
 
-### git
-alias merge-this-branch="gh pr merge $(git rev-parse --abbrev-ref HEAD) -s -d --auto -b ''"
-
 ### saml2aws
 alias saml-login='saml2aws login --skip-prompt --session-duration=43200'
 alias saml-drake='saml2aws exec --exec-profile monolith -- bin/drake'
@@ -107,6 +104,11 @@ export PATH="/Users/gavin.hailey/.local/bin:$PATH"
 export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
 
 ## functions
+function merge-this-branch() {
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    gh pr merge $BRANCH -s -d --auto -b ''
+}
+
 function diff-to-html() {
     vimdiff $1 $2 -c TOhtml -c "w $3" -c 'qa!'
 }
