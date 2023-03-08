@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+source $DOTFILES_PATH/packages
+
+install_all_packages
+

@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+DOTFILES_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+
 function install_all_packages {
   brew update  
 
@@ -75,6 +78,9 @@ function install_docker_colima {
   brew install colima docker docker-compose docker-credential-helper
   mkdir -p "${HOME}/.docker/cli-plugins"
   ln -sfn "$(brew --prefix docker-compose)/bin/docker-compose" "${HOME}/.docker/cli-plugins/docker-compose"
+  ln -sfn $DOTFILES_PATH/docker/config.json ~/.docker/config.json
+  saml2aws exec --exec-profile monolith -- aws ecr get-login-password \
+    | docker login --username AWS --password-stdin "264606497040.dkr.ecr.us-east-1.amazonaws.com"
 }
 
 function install_neovim {
@@ -90,10 +96,10 @@ function install_oh_my_zsh {
 
   # zsh plugins
   echo "Installing oh-my-zsh plugins"
-  git clone https://github.com/onyxraven/zsh-osx-keychain.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-osx-keychain
-  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+  git clone https://github.com/onyxraven/zsh-osx-keychain.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-osx-keychain
+  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
   # restart shell
   echo "Configure p10k..."
@@ -104,19 +110,19 @@ function install_oh_my_zsh {
 function install_my_zshrc {
   echo "Installing my zshrc"
   rm -f ~/.zshrc
-  ln -s $DOTFILES_PATH/zshrc ~/.zshrc
+  ln -sfn $DOTFILES_PATH/zshrc ~/.zshrc
 }
 
 function install_ssh_config {
   echo "Installing ssh config"
   mkdir -p ~/.ssh
   rm -f ~/.ssh/config
-  ln -s $DOTFILES_PATH/ssh/config ~/.ssh/config
+  ln -sfn $DOTFILES_PATH/ssh/config ~/.ssh/config
 }
 
 function install_gitconfig {
   echo "Installing gitconfig"
   rm -f ~/.gitconfig
-  ln -s $DOTFILES_PATH/gitconfig ~/.gitconfig
+  ln -sfn $DOTFILES_PATH/gitconfig ~/.gitconfig
 }
 
