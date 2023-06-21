@@ -15,6 +15,7 @@ plugins=(
   vscode
   zsh-autosuggestions
   zsh-syntax-highlighting
+  aws
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -33,8 +34,8 @@ fi
 
 ### nvm
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 ### pyenv
 export PYENV_ROOT="$HOME/.pyenv"
@@ -51,11 +52,6 @@ eval "$(rbenv init - zsh)"
 ### rust
 export PATH=$PATH:/Users/$USER/.cargo/bin
 
-### go
-export GOROOT="/opt/homebrew/opt/go"
-export GOPATH="$HOME/.local/go"
-export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
-
 ## completions 
 
 ### saml2aws
@@ -69,18 +65,21 @@ alias vi="nvim"
 
 ### saml2aws
 alias saml-login='saml2aws login --skip-prompt --session-duration=43200'
-alias saml-drake='saml2aws exec --exec-profile monolith -- bin/drake'
-alias saml-update='saml2aws exec --exec-profile monolith --bin/drake update'
-alias saml-rspec='saml2aws exec --exec-profile monolith -- bin/drake spring rspec'
-alias saml-monolith='saml2aws exec --exec-profile monolith --'
-alias saml-staging='saml2aws exec --exec-profile staging --'
-alias saml-k8s='saml2aws exec --exec-profile k8s --'
+alias drake='saml2aws exec --exec-profile monolith -- bin/drake'
+alias monolith-update='saml2aws exec --exec-profile monolith -- bin/drake update'
+alias monolith-rspec='saml2aws exec --exec-profile monolith -- bin/drake spring rspec'
 alias docker-login='saml2aws exec --exec-profile=monolith -- aws ecr get-login-password | docker login --password-stdin --username AWS 264606497040.dkr.ecr.us-east-1.amazonaws.com'
 alias ecr='saml-monolith ./scripts/ecr.sh'
 
 ### tsa
-alias tsa-staging="saml2aws exec --exec-profile tlog-staging-admin --"
-alias tsa-k8s="saml2aws exec --exec-profile tlog-prod-admin --"
+alias tsa-stage='tlog-staging-admin'
+alias tsa-prod='tlog-prod-admin'
+
+function saml {
+  profile=$1
+  shift
+  saml2aws exec --exec-profile $profile -- $@
+}
 
 ## environment variables
 
@@ -89,7 +88,9 @@ export VISUAL='nvim'
 
 ### credentials
 export NPM_BASE=$(keychain-environment-variable NPM_BASE)
-export NPM_REPO_LOGIN=$(keychain-environment-variable NPM_REPO_LOGIN)
+export NPM_REPO_USERNAME=$(keychain-environment-variable NPM_REPO_USERNAME)
+export NPM_REPO_PASSWORD=$(keychain-environment-variable NPM_REPO_PASSWORD)
+export NPM_REPO_LOGIN="${NPM_REPO_USERNAME}:${NPM_REPO_PASSWORD}"
 export GEM_REPO_LOGIN=$(keychain-environment-variable GEM_REPO_LOGIN)
 export MVN_REPO_LOGIN=$(keychain-environment-variable MVN_REPO_LOGIN)
 export MASTER_GENERATOR_LOGIN=$(keychain-environment-variable MASTER_GENERATOR_LOGIN)
@@ -105,7 +106,7 @@ export KMS_ALIAS=alias/tlog-serverless-adapter-config-data
 
 ### path stuffs
 export PATH="/Users/gavin.hailey/.local/bin:$PATH"
-export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
+export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"
 
 ## functions
 function merge-this-branch {
@@ -118,3 +119,4 @@ function diff-to-html {
 }
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+

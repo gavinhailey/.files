@@ -3,30 +3,6 @@
 DOTFILES_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 
-function install_all_packages {
-  brew update  
-
-  install_oh_my_zsh
-  install_pyenv
-  install_rbenv
-  install_nvm
-  install_jenv
-  install_go
-  install_rust
-  install_docker_colima
-
-  install_my_zshrc
-  install_gitconfig
-  install_ssh_config
-
-  source ~/.zshrc || true
-
-  install_python_poetry
-  install_neovim
-
-  brew install bat awscli saml2aws gh fzf ripgrep tldr htop tree jq tmux openssh gnu-getopt gnupg
-}
-
 function install_pyenv {
   DEFAULT_PYTHON_VERSION="3.9.16"
   echo "Installing pyenv and python ${DEFAULT_PYTHON_VERSION}"
@@ -55,8 +31,7 @@ function install_go {
 
 function install_nvm {
   echo "Installing nvm"
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-  source ~/.zshrc || true
+  brew install nvm
   nvm install --lts && nvm use --lts
 }
 
@@ -71,6 +46,12 @@ function install_jenv {
 function install_rust {
   echo "Installing rust"
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y --no-modify-path
+}
+
+function install_julia {
+  # juliaup doesn't like the no-add-to-path option right now, so this will be added later
+  echo "Installing julia"
+  curl -fsSL https://install.julialang.org | bash -s -- -y --no-add-to-path
 }
 
 function install_docker_colima {
@@ -99,7 +80,11 @@ function install_oh_my_zsh {
   git clone https://github.com/onyxraven/zsh-osx-keychain.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-osx-keychain
   git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
   git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+  git clone --depth=1 https://github.com/marlonrichert/zsh-autocomplete.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+  # add plugin and theme autoupdates
+  
 
   # restart shell
   echo "Configure p10k..."

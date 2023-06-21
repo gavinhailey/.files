@@ -2,5 +2,30 @@
 
 source $DOTFILES_PATH/packages
 
-install_all_packages
+function install_all_packages {
+  brew update  
+
+  install_oh_my_zsh
+  install_pyenv
+  install_rbenv
+  install_nvm
+  install_jenv
+  install_go
+  install_rust
+  install_docker_colima
+
+  install_my_zshrc
+  install_gitconfig
+  install_ssh_config
+
+  source ~/.zshrc || true
+
+  install_python_poetry
+  install_neovim
+
+  brew install bat awscli saml2aws gh fzf ripgrep tldr htop tree jq tmux openssh gnu-getopt gnupg wget
+  brew link docker
+}
+
+intstall_all_packages
 
