@@ -11,16 +11,46 @@ plugins=(
   poetry
   git
   gh
+  zsh-saml2aws
+  fzf-tab
   zsh-osx-keychain
-  vscode
   zsh-autosuggestions
   zsh-syntax-highlighting
   aws
+  fzf
 )
 
 source $ZSH/oh-my-zsh.sh
 
 # user configuration
+
+## fzf
+
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_COMPLETION_OPTS='--border --info=inline'
+
+### disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+### set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+### set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+### preview directory's content with exa when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+### switch group using `,` and `.`
+zstyle ':fzf-tab:*' switch-group ',' '.'
+
+### use fd instead of find
+_files() {
+    local files=($(fd --hidden --follow --type=f -d 1))
+    compadd -a -f files
+}
+
+_cd() {
+    local dirs=($(fd --hidden --follow --type=d -d 1))
+    compadd -a -f dirs
+}
 
 ## default editor for local and remote sessions
 
@@ -75,14 +105,7 @@ alias ecr='saml-monolith ./scripts/ecr.sh'
 alias tsa-stage='tlog-staging-admin'
 alias tsa-prod='tlog-prod-admin'
 
-function saml {
-  profile=$1
-  shift
-  saml2aws exec --exec-profile $profile -- $@
-}
-
 ## environment variables
-
 export EDITOR='nvim'
 export VISUAL='nvim'
 
@@ -101,6 +124,9 @@ export AWS_ASSUME_ROLE_TTL=1h
 export AWS_DEFAULT_REGION=us-east-1
 export AWS_SESSION_TTL=12h
 export AWS_REGION=us-east-1
+export SAML2AWS_LOGIN_SESSION_DURATION=43200
+export SAML2AWS_SESSION_DURATION=3600
+
 #### tlog
 export KMS_ALIAS=alias/tlog-serverless-adapter-config-data
 
@@ -120,3 +146,5 @@ function diff-to-html {
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
