@@ -17,7 +17,6 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
   aws
-  fzf
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -26,8 +25,6 @@ source $ZSH/oh-my-zsh.sh
 
 ## fzf
 
-export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_COMPLETION_OPTS='--border --info=inline'
 
 ### disable sort when completing `git checkout`
@@ -40,17 +37,6 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 ### switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group ',' '.'
-
-### use fd instead of find
-_files() {
-    local files=($(fd --hidden --follow --type=f -d 1))
-    compadd -a -f files
-}
-
-_cd() {
-    local dirs=($(fd --hidden --follow --type=d -d 1))
-    compadd -a -f dirs
-}
 
 ## default editor for local and remote sessions
 
@@ -146,5 +132,3 @@ function diff-to-html {
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
