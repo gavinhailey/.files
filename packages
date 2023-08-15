@@ -84,7 +84,7 @@ function install_oh_my_zsh {
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
   # add plugin and theme autoupdates
-  
+  sed -i '/if the update failed/r ~/.oh-my-zsh/tools/upgrade.sh' upgrade-zsh-plugins.sh  
 
   # restart shell
   echo "Configure p10k..."

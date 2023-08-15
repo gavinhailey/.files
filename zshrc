@@ -48,11 +48,6 @@ fi
 
 ## development environment version managers
 
-### nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
 ### pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
@@ -75,9 +70,13 @@ eval "$(saml2aws --completion-script-zsh)"
 
 ## aliases
 
+### general
 alias cat="bat"
 alias vim="nvim"
 alias vi="nvim"
+alias ls="exa"
+alias la="exa -al --git --no-user"
+alias gg-dependabot="gh combine-prs --query 'author:app/dependabot'"
 
 ### saml2aws
 alias saml-login='saml2aws login --skip-prompt --session-duration=43200'
@@ -91,6 +90,9 @@ alias ecr='saml-monolith ./scripts/ecr.sh'
 alias tsa-stage='tlog-staging-admin'
 alias tsa-prod='tlog-prod-admin'
 
+### colima
+alias colima-start="colima start --arch aarch64 --vm-type=vz --vz-rosetta --mount-type=virtiofs --cpu=4 --memory=8 --disk=120"
+
 ## environment variables
 export EDITOR='nvim'
 export VISUAL='nvim'
@@ -103,6 +105,8 @@ export NPM_REPO_LOGIN="${NPM_REPO_USERNAME}:${NPM_REPO_PASSWORD}"
 export GEM_REPO_LOGIN=$(keychain-environment-variable GEM_REPO_LOGIN)
 export MVN_REPO_LOGIN=$(keychain-environment-variable MVN_REPO_LOGIN)
 export MASTER_GENERATOR_LOGIN=$(keychain-environment-variable MASTER_GENERATOR_LOGIN)
+export POETRY_HTTP_BASIC_IBPYPI_USERNAME=$(keychain-environment-variable POETRY_HTTP_BASIC_REPO_USERNAME)
+export POETRY_HTTP_BASIC_IBPYPI_PASSWORD=$(keychain-environment-variable POETRY_HTTP_BASIC_REPO_PASSWORD)
 
 ### saml2aws qol
 export AWS_FEDERATION_TOKEN_TTL=12h
@@ -116,8 +120,15 @@ export SAML2AWS_SESSION_DURATION=3600
 #### tlog
 export KMS_ALIAS=alias/tlog-serverless-adapter-config-data
 
+#### upaf 
+export PREFIX_ID="zn-demo" # default
+alias upaf-upload-demo-stage='PREFIX_ID="zn-demo" sax zn-demo-stage npm run upload'
+alias upaf-deploy-demo-stage='CI=true PREFIX_ID="zn-demo" sax zn-demo-stage npm run deploy'
+
 ### path stuffs
 export PATH="/Users/gavin.hailey/.local/bin:$PATH"
+export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
 export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"
 
 ## functions
@@ -132,3 +143,7 @@ function diff-to-html {
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+### nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion

@@ -4,6 +4,8 @@ source $DOTFILES_PATH/packages
 
 function install_all_packages {
   brew update  
+  brew bundle install 
+  brew link docker
 
   install_oh_my_zsh
   install_pyenv
@@ -22,10 +24,7 @@ function install_all_packages {
 
   install_python_poetry
   install_neovim
-
-  brew install bat awscli saml2aws gh fzf ripgrep tldr htop tree jq tmux openssh gnu-getopt gnupg wget diff-so-fancy
-  brew link docker
 }
 
-intstall_all_packages
+install_all_packages
 
