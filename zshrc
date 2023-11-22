@@ -92,6 +92,7 @@ alias tsa-prod='tlog-prod-admin'
 
 ### colima
 alias colima-start="colima start --arch aarch64 --vm-type=vz --vz-rosetta --mount-type=virtiofs --cpu=4 --memory=8 --disk=120"
+alias colima-start-default="colima start --cpu=4 --memory=8 --disk=120"
 
 ## environment variables
 export EDITOR='nvim'
@@ -107,6 +108,7 @@ export MVN_REPO_LOGIN=$(keychain-environment-variable MVN_REPO_LOGIN)
 export MASTER_GENERATOR_LOGIN=$(keychain-environment-variable MASTER_GENERATOR_LOGIN)
 export POETRY_HTTP_BASIC_IBPYPI_USERNAME=$(keychain-environment-variable POETRY_HTTP_BASIC_REPO_USERNAME)
 export POETRY_HTTP_BASIC_IBPYPI_PASSWORD=$(keychain-environment-variable POETRY_HTTP_BASIC_REPO_PASSWORD)
+export RUNSCOPE_PAT=$(keychain-environment-variable RUNSCOPE_PAT)
 
 ### saml2aws qol
 export AWS_FEDERATION_TOKEN_TTL=12h
@@ -119,11 +121,6 @@ export SAML2AWS_SESSION_DURATION=3600
 
 #### tlog
 export KMS_ALIAS=alias/tlog-serverless-adapter-config-data
-
-#### upaf 
-export PREFIX_ID="zn-demo" # default
-alias upaf-upload-demo-stage='PREFIX_ID="zn-demo" sax zn-demo-stage npm run upload'
-alias upaf-deploy-demo-stage='CI=true PREFIX_ID="zn-demo" sax zn-demo-stage npm run deploy'
 
 ### path stuffs
 export PATH="/Users/gavin.hailey/.local/bin:$PATH"
@@ -138,8 +135,63 @@ function merge-this-branch {
 }
 
 function diff-to-html {
-    nvim -d $1 $2 -c TOhtml -c "w $3" -c 'qa!'
+    nvim -d "$@" -c TOhtml -c "w diff.html" -c 'qa!'
 }
+
+function upaf-deploy {
+    ZONE=$1
+    npm run build:cacheless
+    PREFIX_ID=$ZONE sax "${ZONE}-stage" npm run upload
+    PREFIX_ID=$ZONE CONFIRM=y sax "${ZONE}-stage" npm run deploy
+}
+
+function prettify-json {
+    FILE=$1
+    jq . $FILE > "$FILE.tmp" && mv "$FILE.tmp" $FILE
+}
+
+# BEGIN_AWS_SSO_CLI
+
+# AWS SSO requires `bashcompinit` which needs to be enabled once and
+# only once in your shell.  Hence we do not include the two lines:
+#
+# autoload -Uz +X compinit && compinit
+# autoload -Uz +X bashcompinit && bashcompinit
+#
+# If you do not already have these lines, you must COPY the lines 
+# above, place it OUTSIDE of the BEGIN/END_AWS_SSO_CLI markers
+# and of course uncomment it
+
+__aws_sso_profile_complete() {
+     local _args=${AWS_SSO_HELPER_ARGS:- -L error}
+    _multi_parts : "($(/opt/homebrew/bin/aws-sso ${=_args} list --csv Profile))"
+}
+
+aws-sso-profile() {
+    local _args=${AWS_SSO_HELPER_ARGS:- -L error}
+    if [ -n "$AWS_PROFILE" ]; then
+        echo "Unable to assume a role while AWS_PROFILE is set"
+        return 1
+    fi
+    eval $(/opt/homebrew/bin/aws-sso ${=_args} eval -p "$1")
+    if [ "$AWS_SSO_PROFILE" != "$1" ]; then
+        return 1
+    fi
+}
+
+aws-sso-clear() {
+    local _args=${AWS_SSO_HELPER_ARGS:- -L error}
+    if [ -z "$AWS_SSO_PROFILE" ]; then
+        echo "AWS_SSO_PROFILE is not set"
+        return 1
+    fi
+    eval $(/opt/homebrew/bin/aws-sso ${=_args} eval -c)
+}
+
+compdef __aws_sso_profile_complete aws-sso-profile
+complete -C /opt/homebrew/bin/aws-sso aws-sso
+
+#
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -147,3 +199,4 @@ function diff-to-html {
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+

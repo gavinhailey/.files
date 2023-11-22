@@ -5,3 +5,7 @@
   prune = true
 [push]
   autoSetupRemote = true
+[alias]
+	uncommit = reset HEAD^
+[pull]
+	rebase = false
