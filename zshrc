@@ -108,7 +108,7 @@ export MVN_REPO_LOGIN=$(keychain-environment-variable MVN_REPO_LOGIN)
 export MASTER_GENERATOR_LOGIN=$(keychain-environment-variable MASTER_GENERATOR_LOGIN)
 export POETRY_HTTP_BASIC_IBPYPI_USERNAME=$(keychain-environment-variable POETRY_HTTP_BASIC_REPO_USERNAME)
 export POETRY_HTTP_BASIC_IBPYPI_PASSWORD=$(keychain-environment-variable POETRY_HTTP_BASIC_REPO_PASSWORD)
-export RUNSCOPE_PAT=$(keychain-environment-variable RUNSCOPE_PAT)
+export RUNSCOPE_TOKEN=$(keychain-environment-variable RUNSCOPE_PAT)
 
 ### saml2aws qol
 export AWS_FEDERATION_TOKEN_TTL=12h
@@ -143,6 +143,25 @@ function upaf-deploy {
     npm run build:cacheless
     PREFIX_ID=$ZONE sax "${ZONE}-stage" npm run upload
     PREFIX_ID=$ZONE CONFIRM=y sax "${ZONE}-stage" npm run deploy
+}
+
+# generate a missing TLOG message
+# 1st param is retailer
+# 2nd param is the filename
+missingTlog() {
+  TAM_SLACK_TAG="@Carley Greive"
+  ICOPS_SLACK_TAG="@icops"
+  CARE_SLACK_TAG="@liveteam"
+
+  message=$(cat <<-END
+Hi $TAM_SLACK_TAG :wave:,
+
+We're missing a file from $1 today. We'd expect the file to look like \`$2\`. Would you please reach out and have them send the missing file? Thanks!
+
+cc: $ICOPS_SLACK_TAG $CARE_SLACK_TAG
+END
+)
+  echo "$message" | pbcopy
 }
 
 function prettify-json {
