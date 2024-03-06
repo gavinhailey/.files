@@ -33,8 +33,6 @@ zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'
 ### set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-### preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 ### switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group ',' '.'
 
@@ -74,8 +72,8 @@ eval "$(saml2aws --completion-script-zsh)"
 alias cat="bat"
 alias vim="nvim"
 alias vi="nvim"
-alias ls="exa"
-alias la="exa -al --git --no-user"
+alias ls="eza"
+alias la="eza -al --git --no-user"
 alias gg-dependabot="gh combine-prs --query 'author:app/dependabot'"
 
 ### saml2aws
@@ -91,6 +89,7 @@ alias tsa-stage='tlog-staging-admin'
 alias tsa-prod='tlog-prod-admin'
 
 ### colima
+export DOCKER_HOST=unix:///$HOME/.colima/docker.sock
 alias colima-start="colima start --arch aarch64 --vm-type=vz --vz-rosetta --mount-type=virtiofs --cpu=4 --memory=8 --disk=120"
 alias colima-start-default="colima start --cpu=4 --memory=8 --disk=120"
 
@@ -143,6 +142,11 @@ function upaf-deploy {
     npm run build:cacheless
     PREFIX_ID=$ZONE sax "${ZONE}-stage" npm run upload
     PREFIX_ID=$ZONE CONFIRM=y sax "${ZONE}-stage" npm run deploy
+}
+
+function upaf-secret {
+    ZONE=$1
+    sax ops-prod -- kms-file-edit edit -f ./terraform/modules/runscope/secrets/ipn-upaf-$ZONE-stage.json.encrypted -k alias/runscope-execution-automation
 }
 
 # generate a missing TLOG message
@@ -218,4 +222,6 @@ complete -C /opt/homebrew/bin/aws-sso aws-sso
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+eval "$(zoxide init zsh --cmd cd --hook pwd)"
 
