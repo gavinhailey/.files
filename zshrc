@@ -75,6 +75,7 @@ alias vi="nvim"
 alias ls="eza"
 alias la="eza -al --git --no-user"
 alias gg-dependabot="gh combine-prs --query 'author:app/dependabot'"
+alias epoch="date +%s"
 
 ### saml2aws
 alias saml-login='saml2aws login --skip-prompt --session-duration=43200'
